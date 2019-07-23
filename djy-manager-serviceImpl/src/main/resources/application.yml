@@ -1,0 +1,31 @@
+spring:
+  #数据库连接
+  datasource:
+    url: jdbc:mysql://94.191.54.168:3306/djy?useSSL=false&useUnicode=true
+    username: root
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    host: 47.103.63.1
+  cache:
+    type: redis
+dubbo:
+  application:
+    name: djy-manager-serviceImpl #1、指定当前应用服务的名称，注意服务名不能重复
+  registry:
+    protocol: zookeeper  #指定注册中心
+    address: 127.0.0.1:2181 #121.42.242.95:2181,94.191.54.168:2181,47.103.63.1:2181 #指定注册中心的地址
+  #3、指定通讯规则
+  protocol:
+    name: dubbo #指定消费者和服务提供者的通讯协议是dubbo。即：消费者通过zk访问服务时的协议是dubbo
+    port: 21000
+server:
+  port: 2100
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*.xml
+#分页简单配置
+pagehelper:
+  auto-dialect: mysql

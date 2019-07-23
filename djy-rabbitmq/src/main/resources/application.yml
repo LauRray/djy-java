@@ -1,0 +1,20 @@
+server:
+  port: 2102
+spring:
+  rabbitmq:
+    host: 121.42.242.95
+    port: 5672
+    username: guest
+    password: guest
+  #数据库连接
+  datasource:
+    url: jdbc:mysql://94.191.54.168:3306/djy?useSSL=false&useUnicode=true
+    username: root
+    password:
+    driver-class-name: com.mysql.jdbc.Driver
+
+rabbit:
+  send:
+    log:
+      exchange: djy.log.exchange
+      routerkey: djy.log.router

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.djy.sql.mapper.SysMenuMapper">
+
+    <resultMap id="sysMenuMap" type="com.djy.sql.pojo.SysMenu">
+        <id property="id" column="a_id"></id>
+        <result property="title" column="a_title"></result>
+        <result property="type" column="a_type"></result>
+        <result property="pid" column="a_pid"></result>
+        <collection property="children" ofType="com.djy.sql.pojo.SysMenu">
+            <id property="id" column="b_id"></id>
+            <result property="title" column="b_title"></result>
+            <result property="type" column="b_type"></result>
+            <result property="pid" column="b_pid"></result>
+            <collection property="children" ofType="com.djy.sql.pojo.SysMenu">
+                <id property="id" column="c_id"></id>
+                <result property="title" column="c_title"></result>
+                <result property="type" column="c_type"></result>
+                <result property="pid" column="c_pid"></result>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getMenuTree" resultMap="sysMenuMap">
+        select
+            a.id a_id,
+            a.title a_title,
+            a.type a_type,
+            a.pid a_pid,
+            b.id b_id,
+            b.title b_title,
+            b.type b_type,
+            b.pid b_pid,
+            c.id c_id,
+            c.title c_title,
+            c.type c_type,
+            c.pid c_pid
+            from sys_menu  a
+            left join
+            sys_menu b on a.id=b.pid
+            left join
+            sys_menu c on b.id=c.pid
+            where a.pid=0
+            order by a.id,b.id,c.id
+    </select>
+</mapper>

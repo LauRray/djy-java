@@ -1,0 +1,26 @@
+server:
+  port: 2101
+dubbo:
+  application:
+    name: djy-manager-web
+  registry:
+    protocol: zookeeper
+    address: 127.0.0.1:2181 #121.42.242.95:2181,94.191.54.168:2181,47.103.63.1:2181
+  consumer:
+    check: false
+    #timeout: 5000
+
+spring:
+  redis:
+    host: 47.103.63.1
+  cache:
+    type: redis
+  rabbitmq:
+    host: 121.42.242.95
+    port: 5672
+    username: guest
+    password: guest
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss  #统一设置时间格式
+    time-zone: GMT+8 #解决时差
+    #default-property-inclusion: non_null  #设置null值不返回

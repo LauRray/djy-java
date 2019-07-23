@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.djy.sql.mapper.SysLogMapper">
+
+
+
+<select id="pageList" resultType="com.djy.sql.pojo.SysLog">
+   select L.*,u.username
+    from
+        ( select
+            *
+        from
+            sys_log L
+            where type=#{type}
+            <if test="userId!=null">
+                and user_id=#{userId}
+            </if>
+            <if test="type!=null">
+                and type=#{type}
+            </if>
+            <if test="status!=null">
+                and status=#{status}
+            </if>
+        )L
+    left join
+        sys_user u
+    on  L.user_id=u.id
+    order by id desc
+</select>
+
+</mapper>
