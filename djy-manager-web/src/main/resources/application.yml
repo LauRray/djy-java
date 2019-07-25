@@ -21,6 +21,6 @@ spring:
     username: guest
     password: guest
   jackson:
-    date-format: yyyy-MM-dd HH:mm:ss  #统一设置时间格式
+    date-format: yyyy/MM/dd HH:mm:ss  #统一设置时间格式
     time-zone: GMT+8 #解决时差
     #default-property-inclusion: non_null  #设置null值不返回

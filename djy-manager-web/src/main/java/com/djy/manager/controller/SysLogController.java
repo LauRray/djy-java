@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "${ctx}/sysLog")
+@RequestMapping(value = "${ctx}/log")
 public class SysLogController implements SysLogControllerApi {
 
     @Reference

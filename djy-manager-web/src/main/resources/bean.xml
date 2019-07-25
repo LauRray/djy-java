@@ -4,4 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="idWork" class="com.djy.common.IdWorker"></bean>
+
+    <bean id="ossSign" class="com.djy.core.OssSign"></bean>
 </beans>

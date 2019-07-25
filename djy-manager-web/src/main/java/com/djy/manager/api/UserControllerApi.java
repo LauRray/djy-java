@@ -2,6 +2,7 @@ package com.djy.manager.api;
 
 import com.djy.manager.reqVo.UserLoginVo;
 import com.djy.manager.reqVo.sysUser.SysUserPageVo;
+import com.djy.manager.reqVo.sysUser.SysUserSaveVo;
 import com.djy.req.IdListReq;
 import com.djy.res.PageResult;
 import com.djy.res.Result;
@@ -23,4 +24,7 @@ public interface UserControllerApi {
 
     @ApiOperation(value = "删除用户")
     public Result delete(IdListReq idListReq,BindingResult result);
+
+    @ApiOperation(value = "新增用户")
+    public Result sava(SysUserSaveVo sysUserSaveVo,BindingResult result);
 }

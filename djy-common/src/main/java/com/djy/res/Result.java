@@ -4,9 +4,12 @@ import javafx.beans.binding.ObjectExpression;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
-public class Result implements Serializable {
+public class Result implements Serializable{
 
     private static final long serialVersionUID = -6239782806843374849L;
     private int code;

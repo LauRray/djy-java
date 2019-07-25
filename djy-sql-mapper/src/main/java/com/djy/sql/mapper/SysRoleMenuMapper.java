@@ -15,4 +15,6 @@ public interface SysRoleMenuMapper extends Mapper<SysRoleMenu>{
 
     @Delete("delete from sys_role_menu where role_id=#{roleId}")
     public void deleteByRoleId(@Param("roleId") Long roleId);
+
+
 }

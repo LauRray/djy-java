@@ -9,9 +9,11 @@ import com.djy.req.IdListReq;
 import com.djy.res.PageResult;
 import com.djy.res.ResponseEnum;
 import com.djy.res.Result;
+import com.djy.sql.mapper.SysUserRoleMapper;
 import com.djy.sql.mapper.UserMapper;
 import com.djy.sql.pojo.SysLog;
 import com.djy.sql.pojo.SysUser;
+import com.djy.sql.pojo.SysUserRole;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -20,16 +22,20 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import javax.validation.constraints.Size;
+import java.beans.Transient;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -43,6 +49,9 @@ public class UserService implements UserInterface {
 
     @Resource
     PageResult<SysUser> pageResult;
+
+    @Resource
+    SysUserRoleMapper sysUserRoleMapper;
 
     @Resource
     RedisTemplate redisTemplate;
@@ -77,10 +86,14 @@ public class UserService implements UserInterface {
                                                 ,30,TimeUnit.MINUTES);
 
         //修改最后登陆时间
-        this.save(byUsername);
+         userMapper.updateByPrimaryKey(byUsername);
         byUsername.setAuthorization(Authorization);
+
         return Result.buildResultOfSuccess(ResponseEnum.USER_LOGIN_SUCCESS,byUsername);
     }
+
+
+
 
     /**
      * 根据id获取用户信息
@@ -91,11 +104,12 @@ public class UserService implements UserInterface {
     @Cacheable(cacheNames = "djy",key = "'sys_user::'+#userId",unless = "#result.code!=200")
     public Result findById(Long userId) {
         log.info("从数据库获取用户信息..................................");
-        SysUser sysUser = userMapper.selectByPrimaryKey(userId);
+        SysUser sysUser = userMapper.findById(userId);
         if (sysUser==null){
             return Result.buildResultOfSuccess(ResponseEnum.USER_NOT_EXIT,null);
         }
-
+        List<Long> collect = sysUser.getSysUserRoles().stream().map(SysUserRole::getRoleId).collect(Collectors.toList());
+        sysUser.setList(collect);
         return Result.buildResultOfSuccess(ResponseEnum.SUCCESS, sysUser);
     }
 
@@ -105,16 +119,45 @@ public class UserService implements UserInterface {
      * @return
      */
     @Override
-    @CachePut(cacheNames = "djy",key = "'sys_user::'+#sysUser.id",unless = "#result.code!=200")
+    //@CachePut(cacheNames = "djy",key = "'sys_user::'+#sysUser.id",unless = "#result.code!=200")
+    @Caching(
+            evict = {
+                    //清楚用户得缓存
+                    @CacheEvict(cacheNames = "djy",key = "'sys_user::'+#sysUser.id",beforeInvocation = false),
+                    //清楚用户权限的缓存
+                    @CacheEvict(cacheNames = "djy",key = "'sys_user_menu::'+#sysUser.id")
+            }
+    )
+    @Transactional
     public Result save(SysUser sysUser) {
-        if (sysUser.getId()==null){
-            userMapper.insertSelective(sysUser);
-            return Result.buildResultOfErrorNotData(ResponseEnum.USER_SAVE_SUCCESS);
-        }else {
-            userMapper.updateByPrimaryKeySelective(sysUser);
-            return Result.buildResultOfErrorNotData(ResponseEnum.USER_UPDATE_SUCCESS);
-        }
+        boolean flg=sysUser.getId()==null?true:false;
+        Example example=new Example(SysUser.class);
 
+        sysUser.setCreatTime(new Date());
+        if (sysUser.getId()==null){
+            sysUser.setPassword(CommonUtil.password(sysUser.getPassword()));
+            example.createCriteria().andEqualTo("username",sysUser.getUsername());
+            if (!CollectionUtils.isEmpty(userMapper.selectByExample(example))){
+                return Result.buildResultOfErrorNotData(ResponseEnum.USER_SAVA_ERROR);
+            }
+            userMapper.insertSelective(sysUser);
+
+        }else {
+            example.createCriteria().andEqualTo("username",sysUser.getUsername())
+            .andNotEqualTo("id",sysUser.getId());
+            if (!CollectionUtils.isEmpty(userMapper.selectByExample(example))){
+                return Result.buildResultOfErrorNotData(ResponseEnum.USER_SAVA_ERROR);
+            }
+            userMapper.updateByPrimaryKeySelective(sysUser);
+        }
+        /**
+         * 设置用户和角色
+         */
+         sysUserRoleMapper.deleteByUserId(sysUser.getId());
+         if (!CollectionUtils.isEmpty(sysUser.getList())){
+             sysUserRoleMapper.save(sysUser.getList(),sysUser.getId());
+         }
+        return Result.buildResultOfSuccess(flg?ResponseEnum.USER_SAVE_SUCCESS:ResponseEnum.USER_UPDATE_SUCCESS,null);
     }
 
     @Override
@@ -128,23 +171,36 @@ public class UserService implements UserInterface {
 
     @Override
 
+    @Transactional
     public Result delete(IdListReq idListReq) {
          userMapper.deleteByIdList(idListReq.getList());
-        
-
-
-
-        return Result.buildResultOfErrorNotData(ResponseEnum.USER_DELETE_SUCCESS);
+        /**
+         * 删除用户对应的角色
+         */
+         List<Long> list = idListReq.getList();
+        sysUserRoleMapper.deleteByUserIdList(list);
+        Set<String> set=new HashSet<>();
+        /**
+         * 清楚缓存
+         */
+        for(Long id:list){
+            //清楚权限缓存
+            redisTemplate.delete("djy::sys_user_menu::"+id);
+            set.add("djy::sys_user::"+id);
+        }
+        redisTemplate.delete(set);
+     return Result.buildResultOfErrorNotData(ResponseEnum.USER_DELETE_SUCCESS);
     }
-    @Override
-    @CacheEvict(cacheNames = "djy",key = "'sys_user::'+#id",beforeInvocation = false)
-    public void deleteRedis(Long id){
-        log.info(id+"");
-    }
 
+    /**
+     * 根据id获取用户
+     */
     @Override
     public List<SysUser> findSysUser(SysUser sysUser) {
         return userMapper.select(sysUser);
     }
+
+
+
 
 }

@@ -3,6 +3,7 @@ package com.djy.manager.api;
 import com.djy.manager.reqVo.sysRole.SysRolePageVo;
 import com.djy.manager.reqVo.sysRole.SysRoleSaveVo;
 import com.djy.req.IdListReq;
+import com.djy.req.IdReq;
 import com.djy.res.PageResult;
 import com.djy.res.Result;
 import com.djy.sql.pojo.SysRole;
@@ -22,4 +23,13 @@ public interface SysRoleControllerApi {
 
     @ApiOperation("角色新增")
     public Result sava(SysRoleSaveVo sysRoleSaveVo,BindingResult result);
+
+    @ApiOperation("角色修改")
+    public Result update(SysRoleSaveVo sysRoleSaveVo,BindingResult result);
+
+    @ApiOperation("根据角色ID获取角色信息")
+    public Result findById(IdReq idReq,BindingResult result);
+
+    @ApiOperation("查询所有")
+    public Result findAll();
 }

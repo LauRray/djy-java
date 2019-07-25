@@ -12,4 +12,10 @@ public interface SysRoleInterface {
     public Result delete(IdListReq idListReq);
 
     public Result save(SysRole sysRole);
+
+    public Result findById(Long id);
+
+    public Result findAll();
+
+
 }

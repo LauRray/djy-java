@@ -18,3 +18,7 @@ rabbit:
     log:
       exchange: djy.log.exchange
       routerkey: djy.log.router
+path:
+  list:
+    - /security-path-djy/user/login
+    - /security-path-djy/user/logout

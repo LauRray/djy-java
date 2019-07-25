@@ -2,6 +2,7 @@ package com.djy.sql.mapper;
 
 import com.djy.sql.pojo.SysUser;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.additional.idlist.IdListMapper;
 import tk.mybatis.mapper.common.Mapper;
@@ -21,4 +22,10 @@ public interface UserMapper extends Mapper<SysUser> , IdListMapper<SysUser,Long>
      * 查询用户分页
      */
     public List<SysUser> findUserPageList(@Param("username") String username);
+
+
+    /**
+     * 根据id获取用户信息
+     */
+    public SysUser findById(@Param("userId")Long userId);
 }

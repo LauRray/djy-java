@@ -19,7 +19,10 @@ public interface UserInterface {
 
     public Result delete(IdListReq idListReq);
 
-    public void deleteRedis(Long id);
+
 
     public List<SysUser> findSysUser(SysUser sysUser);
+
+
+
 }

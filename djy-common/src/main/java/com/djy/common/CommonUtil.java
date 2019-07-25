@@ -1,9 +1,13 @@
 package com.djy.common;
 
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class CommonUtil {
@@ -23,6 +27,9 @@ public class CommonUtil {
     }
 
 
+    public static String fmortDate(Date date,String reg){
+        return DateFormatUtils.format(date,reg);
+    }
 
     /**
      * 获取请求的IP

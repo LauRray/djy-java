@@ -16,6 +16,7 @@
         <module>djy-common</module>
         <module>djy-manager-web</module>
         <module>djy-rabbitmq</module>
+        <module>djy-core-service</module>
 
     </modules>
 

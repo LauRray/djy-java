@@ -15,4 +15,8 @@ public class V {
     public static final String maxNum="最大值是：";
 
     public static final String minNum="最小值是：";
+
+    public static final String email="邮箱格式错误";
+
+    public static final String lengthScope="长度范围应是：";
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 @Getter
 @AllArgsConstructor
@@ -24,10 +25,12 @@ public enum ResponseEnum {
     USER_UPDATE_SUCCESS(CodeEnum.SUCCESS.getCode(),true,"用户修改成功"),
     USER_PAGELIST_SUCCESS(CodeEnum.SUCCESS.getCode(),false,"用户分页成功"),
     USER_DELETE_SUCCESS(CodeEnum.SUCCESS.getCode(),true,"用户删除成功"),
+    USER_SAVA_ERROR(CodeEnum.ERROR.getCode(),true,"用户名已存在，请更换用户名"),
     SYS_ROLE_PAGELIST_SUCCESS(CodeEnum.SUCCESS.getCode(),false,"角色分页查看成功"),
     SYS_ROLE_DELETE_SUCCESS(CodeEnum.SUCCESS.getCode(),true,"删除成功"),
     SYS_LOG_PAGELIST_SUCCESS(CodeEnum.SUCCESS.getCode(),false,"获取日志成功"),
-    SYS_ROLE_SAVE_SUCCESS(CodeEnum.SUCCESS.getCode(),true,"角色新增成功"),
+    SYS_ROLE_SAVE_SUCCESS(CodeEnum.SUCCESS.getCode(),true,"角色设置成功"),
+    SYS_ROLE_LABEL_EXIT(CodeEnum.ERROR.getCode(),true,"角色已存在！请更换名称"),
     SYS_MENU_TREE_SUCCESS(CodeEnum.SUCCESS.getCode(),false,"成功获取权限树")
     ;
     private int code;

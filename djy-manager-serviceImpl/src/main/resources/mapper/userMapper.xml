@@ -11,6 +11,7 @@
         <result property="lastLogin" column="last_login"></result>
         <result property="email" column="email"></result>
         <result property="tel" column="tel"></result>
+        <result property="img" column="img"></result>
     </resultMap>
 
     <select id="findUserPageList" resultMap="userMap">
@@ -21,7 +22,8 @@
             creat_time,
             last_login,
             email,
-            tel
+            tel,
+            img
         from sys_user
         <where>
             <if test="username!=null and username!='' ">
@@ -30,4 +32,36 @@
         </where>
     </select>
 
+    <resultMap id="userRroleMapper" type="com.djy.sql.pojo.SysUser">
+        <id property="id" column="u_id"></id>
+        <result property="username" column="u_username"></result>
+        <result property="password" column="u_password"></result>
+        <result property="status" column="u_status"></result>
+        <result property="email" column="u_email"></result>
+        <result property="tel" column="u_tel"></result>
+        <result property="realName" column="u_real_name"></result>
+        <result property="img" column="u_img"></result>
+        <result property="creatTime" column="u_creat_time"></result>
+        <collection property="sysUserRoles"  ofType="com.djy.sql.pojo.SysUserRole">
+            <result property="roleId" column="ur_role_id"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="userRroleMapper">
+        select
+            u.id u_id,
+            u.username u_username,
+            u.password u_password,
+            u.status u_status,
+            u.creat_time u_creat_time,
+            u.email u_email,
+            u.tel u_tel,
+            u.real_name u_real_name,
+            u.img u_img,
+            ur.role_id ur_role_id
+        from sys_user u
+        left join sys_user_role ur
+        on u.id=ur.user_id
+        where u.id=#{userId}
+    </select>
 </mapper>

@@ -97,17 +97,21 @@ public class MvcInter implements HandlerInterceptor {
             outputStream.close();
             return false;
         }
-        request.setAttribute("sysUserAttr",sysUser);
-        /**
-         * 构建日志信息
-         */
-        try{
-            SysLog sysLog=new SysLog(
-                    idWorker.nextId(),sysUser.getId(),2,true, CommonUtil.getIpAddress(request),new Date(),
-                    request.getMethod(),request.getRequestURI(),"","");
-            rabbitTemplate.convertAndSend(logExc,router,sysLog);
-        }catch (Exception e){
-            e.printStackTrace();
+        //request.setAttribute("sysUserAttr",sysUser);
+        boolean logFlg = Boolean.valueOf(request.getHeader("logFlg"));
+        if (logFlg){
+            /**
+             * 构建日志信息
+             */
+            try{
+                SysLog sysLog=new SysLog(
+                        idWorker.nextId(),sysUser.getId(),2,true, CommonUtil.getIpAddress(request),new Date(),
+                        request.getMethod(),request.getRequestURI(),"","");
+                rabbitTemplate.convertAndSend(logExc,router,sysLog);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }
 
 

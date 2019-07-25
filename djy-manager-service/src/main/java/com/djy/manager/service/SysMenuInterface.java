@@ -8,4 +8,8 @@ import java.util.List;
 public interface SysMenuInterface {
 
     public Result getMenuTree();
+
+    public List<SysMenu> findMenuByUserId(Long userId);
+
+
 }
